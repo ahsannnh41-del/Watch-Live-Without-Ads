@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SUPER LIVE</title>
+
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
+
+<style>
+
+body{
+margin:0;
+background:#020617;
+font-family:system-ui;
+color:white;
+}
+
+.header{
+background:black;
+padding:18px;
+font-size:26px;
+font-weight:bold;
+text-align:center;
+}
+
+.player{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.video-js{
+width:100%;
+height:520px;
+border-radius:14px;
+}
+
+iframe{
+width:100%;
+height:520px;
+border-radius:14px;
+border:none;
+}
+
+.channels{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:15px;
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#0f172a;
+padding:20px;
+border-radius:12px;
+cursor:pointer;
+transition:.25s;
+text-align:center;
+font-weight:bold;
+}
+
+.card:hover{
+background:red;
+transform:scale(1.05);
+}
+
+.admin{
+position:fixed;
+bottom:20px;
+right:20px;
+background:red;
+padding:14px 18px;
+border-radius:50px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.panel{
+position:fixed;
+top:0;
+right:-400px;
+width:320px;
+height:100%;
+background:#020617;
+padding:20px;
+transition:.4s;
+box-shadow:-5px 0 20px rgba(0,0,0,.5);
+}
+
+.panel.open{
+right:0;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+border:none;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:red;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+🔥 SUPER LIVE STREAM
+</div>
+
+<div class="player">
+
+<video id="player" class="video-js" controls autoplay muted></video>
+<iframe id="frame" style="display:none;"></iframe>
+
+</div>
+
+<div class="channels" id="channels"></div>
+
+<div class="admin" onclick="togglePanel()">
++ ADMIN
+</div>
+
+<div class="panel" id="panel">
+
+<h2>Add Channel</h2>
+
+<input id="name" placeholder="Channel Name">
+
+<select id="type">
+<option value="m3u8">M3U8 / HLS</option>
+<option value="youtube">YouTube</option>
+<option value="embed">Embed Link</option>
+</select>
+
+<input id="link" placeholder="Paste Stream Link">
+
+<button onclick="addChannel()">ADD CHANNEL</button>
+<button onclick="clearChannels()">CLEAR ALL</button>
+
+</div>
+
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+<script>
+
+let player = videojs('player');
+
+function togglePanel(){
+document.getElementById("panel").classList.toggle("open");
+}
+
+function loadChannels(){
+
+let channels = JSON.parse(localStorage.getItem("channels") || "[]");
+
+let box = document.getElementById("channels");
+box.innerHTML="";
+
+channels.forEach((ch,i)=>{
+
+box.innerHTML += `
+<div class="card" onclick="play(${i})">
+${ch.name}
+</div>
+`;
+
+});
+
+}
+
+function addChannel(){
+
+let name=document.getElementById("name").value;
+let type=document.getElementById("type").value;
+let link=document.getElementById("link").value;
+
+if(!name || !link){
+alert("Fill all fields");
+return;
+}
+
+let channels=JSON.parse(localStorage.getItem("channels")||"[]");
+
+channels.push({name,type,link});
+
+localStorage.setItem("channels",JSON.stringify(channels));
+
+loadChannels();
+togglePanel();
+}
+
+function clearChannels(){
+
+localStorage.removeItem("channels");
+loadChannels();
+
+}
+
+function play(i){
+
+let channels=JSON.parse(localStorage.getItem("channels"));
+let ch=channels[i];
+
+document.getElementById("frame").style.display="none";
+document.querySelector(".video-js").style.display="block";
+
+if(ch.type==="m3u8"){
+
+player.src({
+src:ch.link,
+type:"application/x-mpegURL"
+});
+
+player.play();
+
+}
+
+else if(ch.type==="youtube"){
+
+document.querySelector(".video-js").style.display="none";
+let frame=document.getElementById("frame");
+
+frame.style.display="block";
+
+frame.src="https://www.youtube.com/embed/"+ch.link+"?autoplay=1";
+
+}
+
+else{
+
+document.querySelector(".video-js").style.display="none";
+let frame=document.getElementById("frame");
+
+frame.style.display="block";
+
+frame.src=ch.link;
+
+}
+
+}
+
+loadChannels();
+
+</script>
+
+</body>
+  </html>
