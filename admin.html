@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ADMIN</title>
+<style>
+body{background:#020617;color:white;font-family:system-ui;padding:40px}
+input,select,button{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none}
+button{background:red;color:white;font-weight:bold}
+</style>
+</head>
+<body>
+
+<h2>ADMIN LOGIN</h2>
+
+<div id="login">
+<input id="user" placeholder="Username">
+<input id="pass" placeholder="Password" type="password">
+<button onclick="login()">LOGIN</button>
+</div>
+
+<div id="panel" style="display:none">
+
+<h2>Add LIVE</h2>
+
+<input id="lname" placeholder="Channel Name">
+
+<select id="ltype">
+<option value="m3u8">M3U8</option>
+<option value="youtube">YouTube ID</option>
+<option value="embed">Embed Link</option>
+</select>
+
+<input id="llink" placeholder="Link / ID">
+
+<button onclick="addLive()">ADD LIVE</button>
+
+<hr>
+
+<h2>Upload Video</h2>
+
+<input id="vname" placeholder="Video Name">
+<input type="file" id="file">
+
+<button onclick="uploadVideo()">UPLOAD</button>
+
+</div>
+
+<script>
+
+function login(){
+
+let u=document.getElementById("user").value;
+let p=document.getElementById("pass").value;
+
+if(u==="AHSAN" && p==="NONAME@#$41102"){
+document.getElementById("login").style.display="none";
+document.getElementById("panel").style.display="block";
+}
+else{
+alert("Wrong Login");
+}
+
+}
+
+function addLive(){
+
+let lives=JSON.parse(localStorage.getItem("lives")||"[]");
+
+lives.push({
+name:lname.value,
+type:ltype.value,
+link:llink.value
+});
+
+localStorage.setItem("lives",JSON.stringify(lives));
+
+alert("LIVE Added!");
+
+}
+
+function uploadVideo(){
+
+let file=document.getElementById("file").files[0];
+
+if(!file){
+alert("Select video");
+return;
+}
+
+let url=URL.createObjectURL(file);
+
+let vids=JSON.parse(localStorage.getItem("videos")||"[]");
+
+vids.push({
+name:vname.value,
+link:url
+});
+
+localStorage.setItem("videos",JSON.stringify(vids));
+
+alert("Video Uploaded!");
+
+}
+
+</script>
+
+</body>
+  </html>
