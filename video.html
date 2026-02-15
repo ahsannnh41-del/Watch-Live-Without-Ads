@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VIDEOS</title>
+<style>
+body{margin:0;background:#020617;color:white;font-family:system-ui}
+.header{background:black;padding:18px;text-align:center;font-size:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:20px}
+video{width:100%;border-radius:12px}
+</style>
+</head>
+<body>
+
+<div class="header">
+🎬 VIDEOS | <a href="index.html" style="color:red">Live</a>
+</div>
+
+<div class="grid" id="videos"></div>
+
+<script>
+
+let vids=JSON.parse(localStorage.getItem("videos")||"[]");
+
+let box=document.getElementById("videos");
+
+vids.forEach(v=>{
+box.innerHTML+=`
+<div>
+<h3>${v.name}</h3>
+<video controls src="${v.link}"></video>
+</div>
+`;
+});
+
+</script>
+
+</body>
+</html>
